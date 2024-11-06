@@ -55,22 +55,44 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
 
   const currentRound = rounds[currentRoundIndex];
 
-  const playAudio = (speed = playbackSpeed) => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = speed;
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
+const playAudio = (speed = playbackSpeed) => {
+  if (audioRef.current) {
+    console.log('Attempting to play:', currentRound.audioPath);
+    debugAudio(currentRound.audioPath);
+    
+    audioRef.current.playbackRate = speed;
+    audioRef.current.currentTime = 0;
+    
+    const playPromise = audioRef.current.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => console.log('Audio started playing'))
+        .catch(error => console.error('Audio play error:', error));
     }
-  };
+  }
+};
 
-  const togglePlaybackSpeed = () => {
-    const newSpeed = playbackSpeed === 1 ? 0.5 : 1;
-    setPlaybackSpeed(newSpeed);
-    if (audioRef.current) {
-      audioRef.current.playbackRate = newSpeed;
+const debugAudio = async (audioPath) => {
+  try {
+    const response = await fetch(audioPath);
+    console.log('Audio fetch response:', response.status, response.statusText);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+    console.log('Audio file accessible');
+  } catch (error) {
+    console.error('Audio fetch error:', error);
+  }
+};
 
+const togglePlaybackSpeed = () => {
+  const newSpeed = playbackSpeed === 1 ? 0.5 : 1;
+  setPlaybackSpeed(newSpeed);
+  if (audioRef.current) {
+    audioRef.current.playbackRate = newSpeed;
+  }
+};
+  
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-2xl mx-auto">
