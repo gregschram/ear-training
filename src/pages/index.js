@@ -1,30 +1,38 @@
 import React, { useState, useRef } from 'react';
-import { PlayCircle, FastForward, Rewind, Home } from 'lucide-react';
+import { PlayCircle, Rewind, FastForward, Home } from 'lucide-react';
 import { groceryExercises } from '../data/exercises/grocery';
 
 const EXERCISES = {
   SPOKEN_SENTENCE: {
     id: 'spoken-sentence',
     title: 'Identify the spoken sentence',
-    description: 'Hear an everyday sentence, answer from written multiple choice'
+    description: 'Hear an everyday sentence, answer from written multiple choice',
+    generator: (category) => {
+      const rounds = groceryExercises.sentences.items;
+      return [...rounds].sort(() => Math.random() - 0.5).slice(0, 10);
+    }
   }
+  // Future exercise types will go here, each with their own generator function
 };
 
 const HomePage = ({ onSelectExercise }) => {
   return (
-    <div className="grid gap-6 p-6 max-w-2xl mx-auto">
-      {Object.values(EXERCISES).map((exercise) => (
-        <div 
-          key={exercise.id} 
-          className="border rounded-lg shadow-sm hover:shadow-md transition-all bg-white"
-          onClick={() => onSelectExercise(exercise.id)}
-        >
-          <div className="p-6 cursor-pointer">
-            <h2 className="text-2xl font-bold mb-2">{exercise.title}</h2>
-            <p className="text-gray-600">{exercise.description}</p>
-          </div>
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Hearing Training Exercises</h1>
+        <div className="grid gap-6">
+          {Object.values(EXERCISES).map((exercise) => (
+            <button
+              key={exercise.id}
+              onClick={() => onSelectExercise(exercise.id)}
+              className="w-full p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 text-left"
+            >
+              <h2 className="text-xl font-semibold mb-2">{exercise.title}</h2>
+              <p className="text-gray-600">{exercise.description}</p>
+            </button>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };
@@ -43,8 +51,6 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
   const playAudio = (speed = playbackSpeed) => {
     if (audioRef.current) {
       console.log('Attempting to play:', currentRound.audioPath);
-      debugAudio(currentRound.audioPath);
-      
       audioRef.current.playbackRate = speed;
       audioRef.current.currentTime = 0;
       
@@ -54,19 +60,6 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           .then(() => console.log('Audio started playing'))
           .catch(error => console.error('Audio play error:', error));
       }
-    }
-  };
-
-  const debugAudio = async (audioPath) => {
-    try {
-      const response = await fetch(audioPath);
-      console.log('Audio fetch response:', response.status, response.statusText);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log('Audio file accessible');
-    } catch (error) {
-      console.error('Audio fetch error:', error);
     }
   };
 
@@ -104,35 +97,34 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      {/* Navigation Header */}
-      <div className="max-w-2xl mx-auto mb-4 flex justify-between items-center">
-        <button 
-          onClick={onHome}
-          className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
-        >
-          <Home className="h-4 w-4" />
-          Back to Exercises
-        </button>
-        <h2 className="text-xl font-bold">{category}</h2>
-      </div>
-
-      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg">
-        <div className="p-6">
-          {/* Score Display */}
-          <div className="mb-6 text-right">
-            <span className="text-lg font-semibold">
-              Score: {score}/{totalAttempts}
-            </span>
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <button 
+            onClick={onHome}
+            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Back to Exercises
+          </button>
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold">{category}</h2>
+            <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
+              <span className="font-semibold">{score}/{totalAttempts}</span>
+            </div>
           </div>
+        </div>
 
+        {/* Main Game Card */}
+        <div className="bg-white rounded-xl shadow-lg p-6">
           {/* Audio Controls */}
-          <div className="mb-6 space-y-4">
+          <div className="space-y-4 mb-8">
             <audio ref={audioRef} src={currentRound.audioPath} />
             
             <button 
               onClick={() => playAudio()}
-              className="w-full px-6 py-4 bg-[#1e293b] text-white rounded-xl hover:bg-[#334155] transition-colors flex items-center justify-center shadow-sm"
+              className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center shadow-sm"
             >
               <PlayCircle className="mr-2 h-6 w-6" />
               Play Sound {playbackSpeed !== 1 ? '(Slow)' : ''}
@@ -140,7 +132,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
 
             <button
               onClick={togglePlaybackSpeed}
-              className="w-full px-6 py-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center shadow-sm"
+              className="w-full px-6 py-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center"
             >
               {playbackSpeed === 1 ? (
                 <>
@@ -157,20 +149,21 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           </div>
 
           {/* Options Grid */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {currentRound.options.map((option) => (
               <button
                 key={option}
                 onClick={() => handleOptionClick(option)}
                 disabled={gameState === 'showing_result'}
                 className={`
-                  px-6 py-4 rounded-xl text-lg transition-colors shadow-sm
+                  px-6 py-4 rounded-xl text-lg transition-colors relative
                   ${gameState === 'showing_result' && option === currentRound.correctAnswer 
-                    ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : gameState === 'showing_result' && option === selectedAnswer && option !== currentRound.correctAnswer
-                    ? 'bg-red-500 hover:bg-red-600 text-white'
-                    : 'bg-[#1e293b] text-white hover:bg-[#334155]'}
+                    ? 'bg-green-500 text-white hover:bg-green-600' 
+                    : gameState === 'showing_result' && option === selectedAnswer 
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'}
                   ${gameState === 'showing_result' ? 'cursor-default' : 'cursor-pointer'}
+                  disabled:opacity-50
                 `}
               >
                 {option}
@@ -180,12 +173,12 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
 
           {/* Result Alert */}
           {gameState === 'showing_result' && (
-            <div className={`mb-6 p-4 rounded-xl border ${
+            <div className={`mb-6 p-4 rounded-xl ${
               selectedAnswer === currentRound.correctAnswer 
-                ? 'bg-green-50 border-green-200' 
-                : 'bg-red-50 border-red-200'
+                ? 'bg-green-50 border-2 border-green-200' 
+                : 'bg-red-50 border-2 border-red-200'
             }`}>
-              <p className="text-center">
+              <p className="text-center text-lg">
                 {selectedAnswer === currentRound.correctAnswer
                   ? "Correct! Well done!"
                   : `Incorrect. The correct answer was "${currentRound.correctAnswer}". Listen again!`}
@@ -197,7 +190,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           {gameState === 'showing_result' && (
             <button 
               onClick={handleNext}
-              className="w-full px-6 py-4 bg-[#1e293b] text-white rounded-xl hover:bg-[#334155] transition-colors shadow-sm"
+              className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors shadow-sm"
             >
               Next
             </button>
@@ -226,12 +219,8 @@ const App = () => {
     return <HomePage onSelectExercise={handleExerciseSelect} />;
   }
 
-  const generateExerciseRounds = (category, exerciseType, count = 10) => {
-    const rounds = groceryExercises.sentences.items;
-    return [...rounds].sort(() => Math.random() - 0.5).slice(0, count);
-  };
-
-  const rounds = generateExerciseRounds('grocery', selectedExercise);
+  const exercise = EXERCISES[selectedExercise];
+  const rounds = exercise.generator('grocery');
 
   return (
     <ExerciseGame
