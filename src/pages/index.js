@@ -4,15 +4,14 @@ import { groceryExercises } from '../data/exercises/grocery';
 
 const EXERCISES = {
   SPOKEN_SENTENCE: {
-    id: 'spoken-sentence',
+    id: 'SPOKEN_SENTENCE',  // Changed to match the key
     title: 'Identify the spoken sentence',
     description: 'Hear an everyday sentence, answer from written multiple choice',
-    generator: (category) => {
-      const rounds = groceryExercises.sentences.items;
-      return [...rounds].sort(() => Math.random() - 0.5).slice(0, 10);
+    generator: () => {
+      // Simplified generator that just returns the items
+      return groceryExercises.sentences.items;
     }
   }
-  // Future exercise types will go here, each with their own generator function
 };
 
 const HomePage = ({ onSelectExercise }) => {
@@ -77,7 +76,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
       setGameState('showing_result');
       setTotalAttempts(totalAttempts + 1);
       
-      if (option === currentRound.correctAnswer) {
+      if (option === currentRound.sentence) {  // Changed from correctAnswer to sentence
         setScore(score + 1);
       } else {
         setTimeout(() => playAudio(), 1000);
@@ -157,7 +156,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
                 disabled={gameState === 'showing_result'}
                 className={`
                   px-6 py-4 rounded-xl text-lg transition-colors relative
-                  ${gameState === 'showing_result' && option === currentRound.correctAnswer 
+                  ${gameState === 'showing_result' && option === currentRound.sentence 
                     ? 'bg-green-500 text-white hover:bg-green-600' 
                     : gameState === 'showing_result' && option === selectedAnswer 
                     ? 'bg-red-500 text-white hover:bg-red-600'
@@ -174,14 +173,14 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           {/* Result Alert */}
           {gameState === 'showing_result' && (
             <div className={`mb-6 p-4 rounded-xl ${
-              selectedAnswer === currentRound.correctAnswer 
+              selectedAnswer === currentRound.sentence
                 ? 'bg-green-50 border-2 border-green-200' 
                 : 'bg-red-50 border-2 border-red-200'
             }`}>
               <p className="text-center text-lg">
-                {selectedAnswer === currentRound.correctAnswer
+                {selectedAnswer === currentRound.sentence
                   ? "Correct! Well done!"
-                  : `Incorrect. The correct answer was "${currentRound.correctAnswer}". Listen again!`}
+                  : `Incorrect. The correct answer was "${currentRound.sentence}". Listen again!`}
               </p>
             </div>
           )}
@@ -219,8 +218,9 @@ const App = () => {
     return <HomePage onSelectExercise={handleExerciseSelect} />;
   }
 
+  // Get the exercise configuration and generate rounds
   const exercise = EXERCISES[selectedExercise];
-  const rounds = exercise.generator('grocery');
+  const rounds = exercise.generator();
 
   return (
     <ExerciseGame
