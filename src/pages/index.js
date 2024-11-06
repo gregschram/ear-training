@@ -1,7 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PlayCircle, FastForward, Rewind, Home } from 'lucide-react';
 
 const EXERCISES = {
@@ -16,16 +13,14 @@ const HomePage = ({ onSelectExercise }) => {
   return (
     <div className="grid gap-6 p-6">
       {Object.values(EXERCISES).map((exercise) => (
-        <Card 
+        <div 
           key={exercise.id} 
-          className="hover:bg-gray-50 cursor-pointer transition-colors"
+          className="border rounded-lg p-6 hover:bg-gray-50 cursor-pointer transition-colors"
           onClick={() => onSelectExercise(exercise.id)}
         >
-          <CardHeader>
-            <CardTitle>{exercise.title}</CardTitle>
-            <CardDescription>{exercise.description}</CardDescription>
-          </CardHeader>
-        </Card>
+          <h2 className="text-xl font-bold">{exercise.title}</h2>
+          <p className="text-gray-600 mt-2">{exercise.description}</p>
+        </div>
       ))}
     </div>
   );
@@ -109,19 +104,18 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
     <div className="min-h-screen bg-gray-100 p-8">
       {/* Navigation Header */}
       <div className="max-w-2xl mx-auto mb-4 flex justify-between items-center">
-        <Button 
-          variant="outline" 
+        <button 
           onClick={onHome}
-          className="flex items-center gap-2 hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-200"
         >
           <Home className="h-4 w-4" />
           Back to Exercises
-        </Button>
+        </button>
         <h2 className="text-xl font-bold">{category}</h2>
       </div>
 
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="p-6">
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+        <div className="p-6">
           {/* Score Display */}
           <div className="mb-6 text-right">
             <span className="text-lg font-semibold">
@@ -133,19 +127,18 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           <div className="mb-6 space-y-4">
             <audio ref={audioRef} src={currentRound.audioPath} />
             
-            <Button 
+            <button 
               onClick={() => playAudio()}
-              className="w-full hover:bg-blue-600"
-              size="lg"
+              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center"
             >
               <PlayCircle className="mr-2 h-6 w-6" />
               Play Sound {playbackSpeed !== 1 ? '(Slow)' : ''}
-            </Button>
+            </button>
 
-            <Button
+            <button
               onClick={togglePlaybackSpeed}
-              variant={playbackSpeed === 1 ? "outline" : "secondary"}
-              className="w-full hover:bg-gray-100"
+              className={`w-full px-4 py-3 rounded-lg border flex items-center justify-center
+                ${playbackSpeed === 1 ? 'bg-white hover:bg-gray-100' : 'bg-gray-100 hover:bg-gray-200'}`}
             >
               {playbackSpeed === 1 ? (
                 <>
@@ -158,50 +151,50 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
                   Switch to Normal Speed
                 </>
               )}
-            </Button>
+            </button>
           </div>
 
           {/* Options Grid */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             {currentRound.options.map((option) => (
-              <Button
+              <button
                 key={option}
                 onClick={() => handleOptionClick(option)}
                 disabled={gameState === 'showing_result'}
                 className={`
-                  h-16 text-lg cursor-pointer hover:bg-blue-50
+                  px-4 py-3 rounded-lg border h-16 text-lg cursor-pointer hover:bg-blue-50
                   ${gameState === 'showing_result' && option === currentRound.correctAnswer ? 'bg-green-500 hover:bg-green-600 text-white' : ''}
                   ${gameState === 'showing_result' && option === selectedAnswer && option !== currentRound.correctAnswer ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
+                  ${gameState === 'showing_result' ? 'cursor-default' : ''}
                 `}
               >
                 {option}
-              </Button>
+              </button>
             ))}
           </div>
 
           {/* Result Alert */}
           {gameState === 'showing_result' && (
-            <Alert className={`mb-6 ${selectedAnswer === currentRound.correctAnswer ? 'bg-green-50' : 'bg-red-50'}`}>
-              <AlertDescription>
+            <div className={`mb-6 p-4 rounded-lg border ${selectedAnswer === currentRound.correctAnswer ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+              <p>
                 {selectedAnswer === currentRound.correctAnswer
                   ? "Correct! Well done!"
                   : `Incorrect. The correct answer was "${currentRound.correctAnswer}". Listen again!`}
-              </AlertDescription>
-            </Alert>
+              </p>
+            </div>
           )}
 
           {/* Next Button */}
           {gameState === 'showing_result' && (
-            <Button 
+            <button 
               onClick={handleNext}
-              className="w-full hover:bg-blue-600"
-              size="lg"
+              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
             >
               Next
-            </Button>
+            </button>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
