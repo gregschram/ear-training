@@ -12,15 +12,17 @@ const EXERCISES = {
 
 const HomePage = ({ onSelectExercise }) => {
   return (
-    <div className="grid gap-6 p-6">
+    <div className="grid gap-6 p-6 max-w-2xl mx-auto">
       {Object.values(EXERCISES).map((exercise) => (
         <div 
           key={exercise.id} 
-          className="border rounded-lg p-6 hover:bg-gray-50 cursor-pointer transition-colors"
+          className="border rounded-lg shadow-sm hover:shadow-md transition-all bg-white"
           onClick={() => onSelectExercise(exercise.id)}
         >
-          <h2 className="text-xl font-bold">{exercise.title}</h2>
-          <p className="text-gray-600 mt-2">{exercise.description}</p>
+          <div className="p-6 cursor-pointer">
+            <h2 className="text-2xl font-bold mb-2">{exercise.title}</h2>
+            <p className="text-gray-600">{exercise.description}</p>
+          </div>
         </div>
       ))}
     </div>
