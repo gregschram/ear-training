@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { PlayCircle, FastForward, Rewind, Home } from 'lucide-react';
+import { groceryExercises } from '../data/exercises/grocery';
 
 const EXERCISES = {
   SPOKEN_SENTENCE: {
