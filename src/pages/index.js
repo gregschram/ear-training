@@ -109,7 +109,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
       <div className="max-w-2xl mx-auto mb-4 flex justify-between items-center">
         <button 
           onClick={onHome}
-          className="flex items-center gap-2 px-4 py-2 border rounded-md hover:bg-gray-200"
+          className="flex items-center gap-2 px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
         >
           <Home className="h-4 w-4" />
           Back to Exercises
@@ -117,7 +117,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
         <h2 className="text-xl font-bold">{category}</h2>
       </div>
 
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
+      <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg">
         <div className="p-6">
           {/* Score Display */}
           <div className="mb-6 text-right">
@@ -132,7 +132,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
             
             <button 
               onClick={() => playAudio()}
-              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center"
+              className="w-full px-6 py-4 bg-[#1e293b] text-white rounded-xl hover:bg-[#334155] transition-colors flex items-center justify-center shadow-sm"
             >
               <PlayCircle className="mr-2 h-6 w-6" />
               Play Sound {playbackSpeed !== 1 ? '(Slow)' : ''}
@@ -140,8 +140,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
 
             <button
               onClick={togglePlaybackSpeed}
-              className={`w-full px-4 py-3 rounded-lg border flex items-center justify-center
-                ${playbackSpeed === 1 ? 'bg-white hover:bg-gray-100' : 'bg-gray-100 hover:bg-gray-200'}`}
+              className="w-full px-6 py-4 bg-white border rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center shadow-sm"
             >
               {playbackSpeed === 1 ? (
                 <>
@@ -165,10 +164,13 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
                 onClick={() => handleOptionClick(option)}
                 disabled={gameState === 'showing_result'}
                 className={`
-                  px-4 py-3 rounded-lg border h-16 text-lg cursor-pointer hover:bg-blue-50
-                  ${gameState === 'showing_result' && option === currentRound.correctAnswer ? 'bg-green-500 hover:bg-green-600 text-white' : ''}
-                  ${gameState === 'showing_result' && option === selectedAnswer && option !== currentRound.correctAnswer ? 'bg-red-500 hover:bg-red-600 text-white' : ''}
-                  ${gameState === 'showing_result' ? 'cursor-default' : ''}
+                  px-6 py-4 rounded-xl text-lg transition-colors shadow-sm
+                  ${gameState === 'showing_result' && option === currentRound.correctAnswer 
+                    ? 'bg-green-500 hover:bg-green-600 text-white' 
+                    : gameState === 'showing_result' && option === selectedAnswer && option !== currentRound.correctAnswer
+                    ? 'bg-red-500 hover:bg-red-600 text-white'
+                    : 'bg-[#1e293b] text-white hover:bg-[#334155]'}
+                  ${gameState === 'showing_result' ? 'cursor-default' : 'cursor-pointer'}
                 `}
               >
                 {option}
@@ -178,8 +180,12 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
 
           {/* Result Alert */}
           {gameState === 'showing_result' && (
-            <div className={`mb-6 p-4 rounded-lg border ${selectedAnswer === currentRound.correctAnswer ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-              <p>
+            <div className={`mb-6 p-4 rounded-xl border ${
+              selectedAnswer === currentRound.correctAnswer 
+                ? 'bg-green-50 border-green-200' 
+                : 'bg-red-50 border-red-200'
+            }`}>
+              <p className="text-center">
                 {selectedAnswer === currentRound.correctAnswer
                   ? "Correct! Well done!"
                   : `Incorrect. The correct answer was "${currentRound.correctAnswer}". Listen again!`}
@@ -191,7 +197,7 @@ const ExerciseGame = ({ exerciseType, category, rounds, onHome }) => {
           {gameState === 'showing_result' && (
             <button 
               onClick={handleNext}
-              className="w-full px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              className="w-full px-6 py-4 bg-[#1e293b] text-white rounded-xl hover:bg-[#334155] transition-colors shadow-sm"
             >
               Next
             </button>
