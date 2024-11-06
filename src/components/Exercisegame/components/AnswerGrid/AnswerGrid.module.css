@@ -1,1 +1,39 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
+}
 
+.option {
+  padding: var(--spacing-4) var(--spacing-6);
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-xl);
+  font-size: 1.125rem;
+  text-align: center;
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  line-height: 1.3;
+}
+
+.option:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+}
+
+.option.correct {
+  background-color: var(--color-success);
+}
+
+.option.incorrect {
+  background-color: var(--color-error);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
